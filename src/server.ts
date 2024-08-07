@@ -24,6 +24,16 @@ app.post("/enviar-msg", async (req, res) => {
         return { type: 'message', id: message.header.id };
 })
 
+app.get("/listar-msgs", async (req,res) => {
+    const professor = new FireFly({ host: 'http://localhost:5001', namespace: 'default' });
+
+    const msgs = await professor.getMessages();
+    const conteudoMsg = await professor.getData(msgs[0].data[0].id!);
+
+    return res.send(conteudoMsg);
+
+})
+
 app.listen({
     port: 3333,
     host: '0.0.0.0'

@@ -6,7 +6,8 @@ const app = fastify();
 interface Body{
     msg: string
     nome: string,
-    eFungivel: boolean
+    eFungivel: boolean,
+    quantidade: string
 }
 
 app.post("/enviar-msg", async (req, res) => {
@@ -49,6 +50,17 @@ app.post("/criar-pool", async (req, res) => {
     return { type: 'token_pool', id: pool.id };
 })
 
+app.post("/mintar-token", async (req, res) => {
+    const pessoa1 = new FireFly({ host: 'http://localhost:5000', namespace: 'default' });
+
+    const { nome, quantidade } = req.body as Body;
+
+    const transfer = await pessoa1.mintTokens({
+        pool: nome,
+        amount: quantidade,
+    });
+        return { type: 'token_transfer', id: transfer.localId };
+})
 
 app.listen({
     port: 3333,

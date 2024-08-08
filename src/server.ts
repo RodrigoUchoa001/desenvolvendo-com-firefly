@@ -5,6 +5,8 @@ const app = fastify();
 
 interface Body{
     msg: string
+    nome: string,
+    eFungivel: boolean
 }
 
 app.post("/enviar-msg", async (req, res) => {
@@ -31,8 +33,22 @@ app.get("/listar-msgs", async (req,res) => {
     const conteudoMsg = await pessoa2.getData(msgs[0].data[0].id!);
 
     return res.send(conteudoMsg);
-
 })
+
+app.post("/criar-pool", async (req, res) => {
+    const pessoa1 = new FireFly({ host: 'http://localhost:5000', namespace: 'default' });
+
+    const { nome, eFungivel } = req.body as Body;
+
+
+    const pool = await pessoa1.createTokenPool({
+        name: nome,
+        type: eFungivel ? 'fungible' : 'nonfungible',
+        }, { publish: true });
+    
+    return { type: 'token_pool', id: pool.id };
+})
+
 
 app.listen({
     port: 3333,

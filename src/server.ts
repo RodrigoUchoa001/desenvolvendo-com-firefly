@@ -10,9 +10,9 @@ interface Body{
 app.post("/enviar-msg", async (req, res) => {
     const { msg } = req.body as Body;
 
-    const aluno = new FireFly({ host: 'http://localhost:5000', namespace: 'default' });
+    const pessoa1 = new FireFly({ host: 'http://localhost:5000', namespace: 'default' });
 
-    const message = await aluno.sendBroadcast({
+    const message = await pessoa1.sendBroadcast({
         header: {
         },
         data: [
@@ -25,10 +25,10 @@ app.post("/enviar-msg", async (req, res) => {
 })
 
 app.get("/listar-msgs", async (req,res) => {
-    const professor = new FireFly({ host: 'http://localhost:5001', namespace: 'default' });
+    const pessoa2 = new FireFly({ host: 'http://localhost:5001', namespace: 'default' });
 
-    const msgs = await professor.getMessages();
-    const conteudoMsg = await professor.getData(msgs[0].data[0].id!);
+    const msgs = await pessoa2.getMessages();
+    const conteudoMsg = await pessoa2.getData(msgs[0].data[0].id!);
 
     return res.send(conteudoMsg);
 

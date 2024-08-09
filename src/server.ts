@@ -103,6 +103,19 @@ app.post("/transferir-token-complexo", async (req, res) => {
     return { type: 'token_transfer', id: transfer.localId };
 })
 
+
+app.post("/queimar-token", async (req, res) => {
+    const pessoa2 = new FireFly({ host: 'http://localhost:5001', namespace: 'default' });
+
+    const { nome, quantidade } = req.body as Body;
+
+    const burn = await pessoa2.burnTokens({
+        pool: nome,
+        amount: quantidade,
+      });
+    return { type: 'token_transfer', id: burn.localId };
+})
+
 app.listen({
     port: 3333,
     host: '0.0.0.0'

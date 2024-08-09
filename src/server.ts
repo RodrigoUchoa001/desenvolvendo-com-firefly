@@ -7,7 +7,9 @@ interface Body{
     msg: string
     nome: string,
     eFungivel: boolean,
-    quantidade: string
+    quantidade: string,
+    destinatario: string,
+    carteiraDestinatario: string,
 }
 
 app.post("/enviar-msg", async (req, res) => {
@@ -60,6 +62,45 @@ app.post("/mintar-token", async (req, res) => {
         amount: quantidade,
     });
         return { type: 'token_transfer', id: transfer.localId };
+})
+
+app.post("/transferir-token", async (req, res) => {
+    const pessoa1 = new FireFly({ host: 'http://localhost:5000', namespace: 'default' });
+
+    const { nome, quantidade, carteiraDestinatario } = req.body as Body;
+
+    const transfer = await pessoa1.transferTokens({
+        pool: nome,
+        to: carteiraDestinatario,
+        amount: quantidade,
+      });
+    return { type: 'token_transfer', id: transfer.localId };
+})
+
+
+app.post("/transferir-token-complexo", async (req, res) => {
+    const pessoa1 = new FireFly({ host: 'http://localhost:5000', namespace: 'default' });
+
+    const { nome, quantidade, destinatario } = req.body as Body;
+
+    const identidades = await pessoa1.getIdentities({
+        fetchverifiers: 'true'
+    });
+
+    let carteiraDestinatario;
+    identidades.forEach((identidade) => {
+        if (identidade.did == destinatario){
+            carteiraDestinatario = identidade.verifiers![0].value;
+            console.log(identidade.did);
+        }
+    });
+
+    const transfer = await pessoa1.transferTokens({
+        pool: nome,
+        to: carteiraDestinatario,
+        amount: quantidade,
+      });
+    return { type: 'token_transfer', id: transfer.localId };
 })
 
 app.listen({

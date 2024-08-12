@@ -77,7 +77,9 @@ app.post("/transferir-token", async (req, res) => {
     return { type: 'token_transfer', id: transfer.localId };
 })
 
-
+// usando essa rota, invés de você passar o endereço da carteira ethereum diretamente,
+// você passa o "did". A função automaticamente irá procurar pelo membro que tem esse "did",
+// e então, resgatará o endereço da carteira dessa pessoa, enviando o token a mesma.
 app.post("/transferir-token-complexo", async (req, res) => {
     const pessoa1 = new FireFly({ host: 'http://localhost:5000', namespace: 'default' });
 
